@@ -1,4 +1,4 @@
-package product
+package kafka
 
 import "kafka-go-batch-consumer/elastic"
 

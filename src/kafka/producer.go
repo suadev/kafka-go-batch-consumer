@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"kafka-go-batch-consumer/config"
-	"kafka-go-batch-consumer/product"
 	"log"
 
 	"github.com/Shopify/sarama"
@@ -52,7 +51,7 @@ func (p *Producer) StartProduce(done chan struct{}) {
 	fmt.Printf("[Producer] Started event producing. Total Count: %d \n", messageCount)
 
 	for i := 0; i < messageCount; i++ {
-		msg := product.ProductChangedEvent{
+		msg := ProductChangedEvent{
 			ID:         i,
 			Name:       gofakeit.Fruit(),
 			CategoryID: i % 40,

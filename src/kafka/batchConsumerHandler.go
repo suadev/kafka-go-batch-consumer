@@ -4,18 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"kafka-go-batch-consumer/elastic"
-	"kafka-go-batch-consumer/product"
 	"sync"
 	"time"
 
 	"github.com/Shopify/sarama"
 )
-
-type BatchConsumerConfig struct {
-	MaxMessageSize        int
-	TickerIntervalSeconds int
-	Callback              func([]elastic.ElasticProductModel, sarama.ConsumerGroupSession) error
-}
 
 type batchConsumerGroupHandler struct {
 	batchConsumerConfig *BatchConsumerConfig
@@ -72,7 +65,7 @@ func (h *batchConsumerGroupHandler) insertMessage(msg *sarama.ConsumerMessage, s
 	h.mu.Lock()
 	defer h.mu.Unlock()
 
-	var productChangedEvent product.ProductChangedEvent
+	var productChangedEvent ProductChangedEvent
 	err := json.Unmarshal(msg.Value, &productChangedEvent)
 	if err != nil {
 		return err
@@ -88,8 +81,6 @@ func (h *batchConsumerGroupHandler) insertMessage(msg *sarama.ConsumerMessage, s
 
 func (h *batchConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	fmt.Println("[Consumer] Consumer is starting for the partition ", claim.Partition())
-	// start := time.Now() // todo
-
 	// Do not move the code below to a goroutine. ConsumeClaim() is already called within a goroutine.
 	// ConsumeClaim() gets called individually  for each partition.
 	claimMessageChan := claim.Messages()
@@ -113,10 +104,4 @@ func (h *batchConsumerGroupHandler) safelyFlushBuffer(session sarama.ConsumerGro
 	h.mu.Lock()
 	h.flushBuffer(session)
 	h.mu.Unlock()
-}
-
-type ConsumerGroupHandler interface {
-	sarama.ConsumerGroupHandler
-	WaitReady()
-	Reset()
 }

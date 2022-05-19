@@ -73,6 +73,18 @@ func (c *ConsumerGroup) Close() error {
 	return c.cg.Close()
 }
 
+type BatchConsumerConfig struct {
+	MaxMessageSize        int
+	TickerIntervalSeconds int
+	Callback              func([]elastic.ElasticProductModel, sarama.ConsumerGroupSession) error
+}
+
 type ConsumerGroup struct {
 	cg sarama.ConsumerGroup
+}
+
+type ConsumerGroupHandler interface {
+	sarama.ConsumerGroupHandler
+	WaitReady()
+	Reset()
 }
