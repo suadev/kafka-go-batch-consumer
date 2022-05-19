@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"kafka-go-batch-consumer/config"
 	"strconv"
-	"strings"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
@@ -94,28 +93,5 @@ func (c *ElasticClient) BulkIndexDocuments(docs []ElasticProductModel) error {
 		return err
 	}
 	fmt.Printf("[Elastic] Indexed %d documents.\n", len(docs))
-	return nil
-}
-
-func (c *ElasticClient) CreateIndex() error {
-	indexName := c.indexName
-	indexExists, err := c.client.Indices.Exists([]string{indexName})
-	if err != nil {
-		return fmt.Errorf("Elastic failed with error : %s", err)
-	}
-	if indexExists.StatusCode == 200 {
-		fmt.Printf("Index already exists : %s.", indexName)
-		return nil
-	}
-
-	createIndex, err := c.client.Indices.Create(
-		indexName,
-		c.client.Indices.Create.WithBody(strings.NewReader(indexConfig)))
-	if err != nil {
-		return fmt.Errorf("Elastic failed with error : %s", err)
-	}
-	if createIndex.StatusCode == 400 {
-		return fmt.Errorf("%v index creation not acknowledged", indexName)
-	}
 	return nil
 }
