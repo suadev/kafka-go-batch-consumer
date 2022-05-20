@@ -6,5 +6,7 @@ After that, it will start a consumer group that store messages into the buffer a
 
 You can fine-tune the current batch size (20K) and make your own performance tests.
 
+Here is an example consumer log with 3K batch size;
+
 <img src="https://raw.githubusercontent.com/suadev/kafka-go-batch-consumer/main/consumer_logs.png" height="500" />
 
